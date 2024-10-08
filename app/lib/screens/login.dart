@@ -44,7 +44,7 @@ class _LoginScreenState extends State<LoginScreen> {
           password: _passwordController.text.trim(),
         );
         // Successful login
-        _showSnackBarSuccess("User Created Successfully");
+        _showSnackBarSuccess("Logged In Successfully");
         Navigator.pushReplacement(
             context, MaterialPageRoute(builder: (context) => const Home()));
       } on FirebaseAuthException catch (e) {
