@@ -3,46 +3,62 @@
 import 'package:app/config/config.dart';
 import 'package:app/screens/home.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+
 import 'package:flutter/material.dart';
 import 'package:loader_overlay/loader_overlay.dart';
 
-class AddTask extends StatefulWidget {
-  const AddTask({super.key});
+class EditTask extends StatefulWidget {
+  final String doccId;
+  final String initialTitle;
+  final String initialDescription;
+
+  const EditTask({
+    super.key,
+    required this.doccId,
+    required this.initialTitle,
+    required this.initialDescription,
+  });
 
   @override
-  State<AddTask> createState() => _AddTaskState();
+  State<EditTask> createState() => _State();
 }
 
-class _AddTaskState extends State<AddTask> {
+class _State extends State<EditTask> {
   final _formKey = GlobalKey<FormState>();
   final TextEditingController _titleController = TextEditingController();
   final TextEditingController _descriptionController = TextEditingController();
 
-  Future<void> _addTask() async {
+  @override
+  void initState() {
+    super.initState();
+    _titleController.text = widget.initialTitle;
+    _descriptionController.text = widget.initialDescription;
+  }
+
+  Future<void> _updateTask() async {
     if (_formKey.currentState!.validate()) {
       context.loaderOverlay.show();
-      Map<String, dynamic> taskData = {
-        'title': _titleController.text,
-        'description': _descriptionController.text,
-        // 'uid': 'asdf',
-        'createdAt':
-            FieldValue.serverTimestamp(), // Add timestamp for task creation
-      };
       try {
-        await FirebaseFirestore.instance.collection('ToDo').add(taskData);
-        context.loaderOverlay.hide();
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Task added successfully!')),
-        );
+        await FirebaseFirestore.instance
+            .collection('ToDo')
+            .doc(widget.doccId)
+            .update({
+          'title': _titleController.text,
+          'description': _descriptionController.text,
+          'updatedAt': FieldValue.serverTimestamp(),
+        });
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (context) => Home()),
+          MaterialPageRoute(
+            builder: (context) => Home(),
+          ),
         );
       } catch (e) {
-        context.loaderOverlay.hide();
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Failed to add task: $e')),
+          SnackBar(content: Text('Failed to update task: $e')),
         );
+      } finally {
+        context.loaderOverlay.hide();
       }
     }
   }
@@ -108,7 +124,7 @@ class _AddTaskState extends State<AddTask> {
                   },
                   child: Icon(Icons.arrow_back_ios, color: Colors.white)),
               Text(
-                'Add Task',
+                'Edit Task',
                 style: TextStyle(color: Colors.white),
               ),
               SizedBox()
@@ -129,7 +145,7 @@ class _AddTaskState extends State<AddTask> {
                       height: screenHeight * 0.02,
                     ),
                     Text(
-                      'To create a todo task ,please add title and description about your task',
+                      'To edit a todo task ,please edit the  title and description about your task',
                       style:
                           TextStyle(fontSize: 18, color: Colors.grey.shade500),
                       textAlign: TextAlign.center,
@@ -157,7 +173,7 @@ class _AddTaskState extends State<AddTask> {
                     ),
                     Center(
                       child: ElevatedButton(
-                        onPressed: _addTask,
+                        onPressed: _updateTask,
                         style: ElevatedButton.styleFrom(
                           backgroundColor: Config.themeMainColor,
                           foregroundColor: Colors.white,
@@ -165,7 +181,7 @@ class _AddTaskState extends State<AddTask> {
                             borderRadius: BorderRadius.circular(10),
                           ),
                         ),
-                        child: Text('Add Task'),
+                        child: Text('Save Changes'),
                       ),
                     ),
                   ],

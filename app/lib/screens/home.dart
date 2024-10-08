@@ -2,6 +2,7 @@
 
 import 'package:app/config/config.dart';
 import 'package:app/screens/addtask.dart';
+import 'package:app/screens/edittask.dart';
 import 'package:app/screens/login.dart';
 import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -180,11 +181,11 @@ class _HomeState extends State<Home> {
 
                       // Data is available, build ListView
                       final tasks = snapshot.data!.docs;
-
                       return ListView.builder(
                         itemCount: tasks.length,
                         itemBuilder: (context, index) {
                           var task = tasks[index];
+                          String doccId = task.id;
                           return Card(
                             margin: EdgeInsets.symmetric(
                                 horizontal: 10, vertical: 5),
@@ -195,11 +196,71 @@ class _HomeState extends State<Home> {
                                       fontWeight: FontWeight.bold)),
                               subtitle: Text(task['description']),
                               trailing: IconButton(
-                                onPressed: () {},
+                                onPressed: () {
+                                  Navigator.pushReplacement(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => EditTask(
+                                        doccId: doccId, // Pass the document ID
+                                        initialTitle: task[
+                                            'title'], // Pass the current title
+                                        initialDescription: task[
+                                            'description'], // Pass the current description
+                                      ),
+                                    ),
+                                  );
+                                },
                                 icon: Icon(
                                   Icons.more_vert,
                                 ),
                               ),
+                              onTap: () {
+                                // Show a confirmation dialog before deletion
+                                showDialog(
+                                  context: context,
+                                  builder: (context) {
+                                    return AlertDialog(
+                                      title: Text('Delete Task'),
+                                      content: Text(
+                                          'Are you sure you want to delete this task?'),
+                                      actions: [
+                                        TextButton(
+                                          onPressed: () {
+                                            Navigator.of(context)
+                                                .pop(); // Close the dialog
+                                          },
+                                          child: Text('Cancel'),
+                                        ),
+                                        TextButton(
+                                          onPressed: () async {
+                                            try {
+                                              await FirebaseFirestore.instance
+                                                  .collection('ToDo')
+                                                  .doc(doccId)
+                                                  .delete();
+                                              Navigator.pop(context);
+                                              ScaffoldMessenger.of(context)
+                                                  .showSnackBar(
+                                                SnackBar(
+                                                    content: Text(
+                                                        'Task deleted successfully')),
+                                              );
+                                            } catch (e) {
+                                              ScaffoldMessenger.of(context)
+                                                  .showSnackBar(
+                                                SnackBar(
+                                                    content: Text(
+                                                        'Failed to delete task: $e')),
+                                              );
+                                            }
+                                          },
+                                          child: Text('Delete'),
+                                        ),
+                                      ],
+                                    );
+                                  },
+                                );
+                              },
                             ),
                           );
                         },
