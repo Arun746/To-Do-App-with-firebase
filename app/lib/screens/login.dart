@@ -1,5 +1,6 @@
 import 'package:app/screens/home.dart';
 import 'package:app/screens/signup.dart';
+import 'package:app/widgets/snackbar.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_auth/firebase_auth.dart' as firebase_auth;
 import 'package:flutter/material.dart';
@@ -43,58 +44,23 @@ class _LoginScreenState extends State<LoginScreen> {
           email: _usernameController.text.trim(),
           password: _passwordController.text.trim(),
         );
-        // Successful login
-        _showSnackBarSuccess("Logged In Successfully");
+        // Successful login , showing snackbar msg
+        SnackBarMsg.showSuccess(context, "Logged In Successfully", 2);
         Navigator.pushReplacement(
             context, MaterialPageRoute(builder: (context) => const Home()));
       } on FirebaseAuthException catch (e) {
-        // Handle different types of errors
         if (e.code == 'user-not-found') {
-          _showSnackBarError("No user found for that email.");
+          SnackBarMsg.showSuccess(context, "user not valid", 2);
         } else if (e.code == 'wrong-password') {
-          _showSnackBarError("Invalid Password");
+          SnackBarMsg.showSuccess(context, "Invalid Password", 2);
         } else {
-          _showSnackBarError("${e.message}");
+          SnackBarMsg.showSuccess(context, "${e.message}", 2);
         }
       } finally {
         // Hide loading overlay
         context.loaderOverlay.hide();
       }
     }
-  }
-
-  void _showSnackBarError(String message) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        backgroundColor: Colors.red.shade700,
-        behavior: SnackBarBehavior.floating,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(20), // Rounded corners
-        ),
-        duration: const Duration(seconds: 2),
-        content: Text(
-          message,
-          textAlign: TextAlign.center,
-        ),
-      ),
-    );
-  }
-
-  void _showSnackBarSuccess(String message) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        backgroundColor: Colors.green.shade700,
-        duration: const Duration(seconds: 2),
-        behavior: SnackBarBehavior.floating,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(20), // Rounded corners
-        ),
-        content: Text(
-          message,
-          textAlign: TextAlign.center,
-        ),
-      ),
-    );
   }
 
   @override

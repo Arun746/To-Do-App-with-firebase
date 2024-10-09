@@ -4,6 +4,7 @@ import 'package:app/config/config.dart';
 import 'package:app/screens/addtask.dart';
 import 'package:app/screens/edittask.dart';
 import 'package:app/screens/login.dart';
+import 'package:app/widgets/snackbar.dart';
 import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -20,48 +21,14 @@ class _HomeState extends State<Home> {
   Future<void> _logout(BuildContext context) async {
     try {
       await FirebaseAuth.instance.signOut();
-      _showSnackBarSuccess('Logged Out Successfully !');
+      SnackBarMsg.showSuccess(context, "Logged Out Successfully", 2);
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(builder: (context) => const LoginScreen()),
       );
     } catch (e) {
-      _showSnackBarError(e.toString());
+      SnackBarMsg.showError(context, "$e", 2);
     }
-  }
-
-  void _showSnackBarError(String message) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        backgroundColor: Colors.red.shade700,
-        behavior: SnackBarBehavior.floating,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(20), // Rounded corners
-        ),
-        duration: const Duration(seconds: 2),
-        content: Text(
-          message,
-          textAlign: TextAlign.center,
-        ),
-      ),
-    );
-  }
-
-  void _showSnackBarSuccess(String message) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        backgroundColor: Colors.green.shade700,
-        duration: const Duration(seconds: 2),
-        behavior: SnackBarBehavior.floating,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(20), // Rounded corners
-        ),
-        content: Text(
-          message,
-          textAlign: TextAlign.center,
-        ),
-      ),
-    );
   }
 
   @override
@@ -239,19 +206,13 @@ class _HomeState extends State<Home> {
                                                   .doc(doccId)
                                                   .delete();
                                               Navigator.pop(context);
-                                              ScaffoldMessenger.of(context)
-                                                  .showSnackBar(
-                                                SnackBar(
-                                                    content: Text(
-                                                        'Task deleted successfully')),
-                                              );
+                                              SnackBarMsg.showSuccess(
+                                                  context,
+                                                  "Task Deleted Successfully",
+                                                  1);
                                             } catch (e) {
-                                              ScaffoldMessenger.of(context)
-                                                  .showSnackBar(
-                                                SnackBar(
-                                                    content: Text(
-                                                        'Failed to delete task: $e')),
-                                              );
+                                              SnackBarMsg.showError(
+                                                  context, "Failed :$e", 2);
                                             }
                                           },
                                           child: Text('Delete'),

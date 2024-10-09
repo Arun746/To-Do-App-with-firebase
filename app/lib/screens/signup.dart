@@ -2,6 +2,7 @@
 
 import 'package:app/config/config.dart';
 import 'package:app/screens/login.dart';
+import 'package:app/widgets/snackbar.dart';
 import 'package:firebase_auth/firebase_auth.dart' as firebase_auth;
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -27,7 +28,7 @@ class _SignUpState extends State<SignUp> {
       await firebaseAuth.createUserWithEmailAndPassword(
           email: emailController.text, password: passwordController.text);
       context.loaderOverlay.hide();
-      _showSnackBarSuccess("User Created Successfully");
+      SnackBarMsg.showSuccess(context, "User created Successfully", 1);
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(
@@ -37,47 +38,11 @@ class _SignUpState extends State<SignUp> {
     } catch (e) {
       context.loaderOverlay.hide();
       if (e is FirebaseAuthException && e.code == 'email-already-in-use') {
-        _showSnackBarError('Email already exists');
+        SnackBarMsg.showError(context, "User already exists", 1);
       } else {
-        _showSnackBarError(
-          e.toString(),
-        );
+        SnackBarMsg.showError(context, "Failed to create user : $e", 2);
       }
     }
-  }
-
-  void _showSnackBarError(String message) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        backgroundColor: Colors.red.shade700,
-        behavior: SnackBarBehavior.floating,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(20), // Rounded corners
-        ),
-        duration: Duration(seconds: 2),
-        content: Text(
-          message,
-          textAlign: TextAlign.center,
-        ),
-      ),
-    );
-  }
-
-  void _showSnackBarSuccess(String message) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        backgroundColor: Colors.green.shade700,
-        duration: Duration(seconds: 2),
-        behavior: SnackBarBehavior.floating,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(20), // Rounded corners
-        ),
-        content: Text(
-          message,
-          textAlign: TextAlign.center,
-        ),
-      ),
-    );
   }
 
   InputDecoration _inputDecoration(String labelText, Icon prefixIcon) {

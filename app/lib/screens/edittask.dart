@@ -2,6 +2,7 @@
 
 import 'package:app/config/config.dart';
 import 'package:app/screens/home.dart';
+import 'package:app/widgets/snackbar.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 import 'package:flutter/material.dart';
@@ -47,6 +48,7 @@ class _State extends State<EditTask> {
           'description': _descriptionController.text,
           'updatedAt': FieldValue.serverTimestamp(),
         });
+        SnackBarMsg.showSuccess(context, "Task Updated Successfully", 1);
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(
@@ -54,9 +56,7 @@ class _State extends State<EditTask> {
           ),
         );
       } catch (e) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Failed to update task: $e')),
-        );
+        SnackBarMsg.showError(context, "Failedd to update task :$e", 1);
       } finally {
         context.loaderOverlay.hide();
       }

@@ -2,6 +2,7 @@
 
 import 'package:app/config/config.dart';
 import 'package:app/screens/home.dart';
+import 'package:app/widgets/snackbar.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:loader_overlay/loader_overlay.dart';
@@ -31,18 +32,14 @@ class _AddTaskState extends State<AddTask> {
       try {
         await FirebaseFirestore.instance.collection('ToDo').add(taskData);
         context.loaderOverlay.hide();
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Task added successfully!')),
-        );
+        SnackBarMsg.showSuccess(context, "Task Added Successfully !", 1);
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(builder: (context) => Home()),
         );
       } catch (e) {
         context.loaderOverlay.hide();
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Failed to add task: $e')),
-        );
+        SnackBarMsg.showError(context, "Failed to add task :$e", 1);
       }
     }
   }
