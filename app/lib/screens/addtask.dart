@@ -8,7 +8,8 @@ import 'package:flutter/material.dart';
 import 'package:loader_overlay/loader_overlay.dart';
 
 class AddTask extends StatefulWidget {
-  const AddTask({super.key});
+  final String? uid;
+  const AddTask({super.key, required this.uid});
 
   @override
   State<AddTask> createState() => _AddTaskState();
@@ -25,9 +26,9 @@ class _AddTaskState extends State<AddTask> {
       Map<String, dynamic> taskData = {
         'title': _titleController.text,
         'description': _descriptionController.text,
-        // 'uid': 'asdf',
-        'createdAt':
-            FieldValue.serverTimestamp(), // Add timestamp for task creation
+        'uid': widget.uid,
+        'createdAt': FieldValue.serverTimestamp(),
+        // Add timestamp for task creation
       };
       try {
         await FirebaseFirestore.instance.collection('ToDo').add(taskData);

@@ -1,19 +1,21 @@
 // ignore_for_file: use_key_in_widget_constructors
+import 'package:firebase_auth/firebase_auth.dart';
 
-import 'package:app/bloc/auth/login/login_bloc.dart';
 import 'package:app/screens/home.dart';
 import 'package:app/screens/login.dart';
-
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
 
-  runApp(const MyApp());
+  runApp(
+    const ProviderScope(
+      child: MyApp(),
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {
@@ -21,15 +23,10 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MultiBlocProvider(
-      providers: [
-        BlocProvider(create: (context) => LoginBloc()),
-      ],
-      child: MaterialApp(
-        title: 'Flutter Demo',
-        home: AuthWrapper(),
-        debugShowCheckedModeBanner: false,
-      ),
+    return MaterialApp(
+      title: 'Flutter Demo',
+      home: AuthWrapper(),
+      debugShowCheckedModeBanner: false,
     );
   }
 }
