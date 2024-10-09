@@ -1,4 +1,4 @@
-// ignore_for_file: prefer_const_constructors, deprecated_member_use, prefer_const_literals_to_create_immutables, library_private_types_in_public_api, prefer_final_fields, use_build_context_synchronously
+// ignore_for_file: deprecated_member_use, prefer_const_literals_to_create_immutables, library_private_types_in_public_api, prefer_final_fields, use_build_context_synchronously
 
 import 'package:app/config/config.dart';
 import 'package:app/screens/login.dart';
@@ -32,7 +32,7 @@ class _SignUpState extends State<SignUp> {
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(
-          builder: (context) => LoginScreen(),
+          builder: (context) => const LoginScreen(),
         ),
       );
     } catch (e) {
@@ -191,7 +191,7 @@ class _SignUpState extends State<SignUp> {
                                     backgroundColor: Config.themeMainColor,
                                     shadowColor: Colors.transparent,
                                   ),
-                                  child: Text(
+                                  child: const Text(
                                     'Sign Up',
                                     style: TextStyle(color: Colors.white),
                                   ),
@@ -229,7 +229,7 @@ class _SignUpState extends State<SignUp> {
                             Navigator.pushReplacement(
                               context,
                               MaterialPageRoute(
-                                builder: (context) => LoginScreen(),
+                                builder: (context) => const LoginScreen(),
                               ),
                             );
                           },

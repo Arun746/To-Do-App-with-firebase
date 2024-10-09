@@ -1,4 +1,4 @@
-// ignore_for_file: use_build_context_synchronously, prefer_const_constructors, unused_field
+// ignore_for_file: use_build_context_synchronously,  unused_field
 import 'package:app/config/config.dart';
 import 'package:app/screens/addtask.dart';
 import 'package:app/screens/edittask.dart';
@@ -56,7 +56,7 @@ class _HomeState extends State<Home> {
       onWillPop: () async {
         DateTime now = DateTime.now();
         if (lastBackPressTime == null ||
-            now.difference(lastBackPressTime!) > Duration(seconds: 3)) {
+            now.difference(lastBackPressTime!) > const Duration(seconds: 3)) {
           lastBackPressTime = now;
           SnackBarMsg.showError(context, "Press again to exit", 1);
           return Future.value(false); //
@@ -118,7 +118,7 @@ class _HomeState extends State<Home> {
                   //search todos with title
                   Container(
                     decoration: BoxDecoration(
-                      color: Color.fromARGB(255, 224, 239, 240),
+                      color: const Color.fromARGB(255, 224, 239, 240),
                       borderRadius: BorderRadius.circular(18),
                     ),
                     child: TextField(
@@ -131,17 +131,17 @@ class _HomeState extends State<Home> {
                       decoration: InputDecoration(
                         border: InputBorder.none,
                         hintText: 'Search ToDos here',
-                        hintStyle: TextStyle(
+                        hintStyle: const TextStyle(
                           color: Colors.grey,
                         ),
-                        prefixIcon: Icon(
+                        prefixIcon: const Icon(
                           Icons.search,
                           color: Colors.black,
                           size: 20,
                         ),
                         suffixIcon: searchQuery.isNotEmpty
                             ? IconButton(
-                                icon: Icon(Icons.clear),
+                                icon: const Icon(Icons.clear),
                                 onPressed: () {
                                   searchController.clear();
                                   setState(() {
@@ -170,7 +170,7 @@ class _HomeState extends State<Home> {
                         //addtodo
                         Container(
                           decoration: BoxDecoration(
-                            color: Color.fromARGB(255, 224, 239, 240),
+                            color: const Color.fromARGB(255, 224, 239, 240),
                             borderRadius: BorderRadius.circular(18),
                           ),
                           child: Padding(
@@ -185,8 +185,11 @@ class _HomeState extends State<Home> {
                                   ),
                                 );
                               },
-                              child: Row(
-                                children: [Icon(Icons.add), Text("Add New")],
+                              child: const Row(
+                                children: [
+                                  const Icon(Icons.add),
+                                  Text("Add New")
+                                ],
                               ),
                             ),
                           ),
@@ -209,7 +212,8 @@ class _HomeState extends State<Home> {
                           (context, AsyncSnapshot<QuerySnapshot> snapshot) {
                         if (snapshot.connectionState ==
                             ConnectionState.waiting) {
-                          return Center(child: CircularProgressIndicator());
+                          return const Center(
+                              child: CircularProgressIndicator());
                         }
                         if (snapshot.hasError) {
                           return Center(
@@ -241,7 +245,7 @@ class _HomeState extends State<Home> {
                               shadowColor: Colors.black.withOpacity(0.9),
                               child: ListTile(
                                 title: Text(task['title'],
-                                    style: TextStyle(
+                                    style: const TextStyle(
                                         fontSize: 18,
                                         fontWeight: FontWeight.bold)),
                                 subtitle: Text(task['description']),
@@ -353,14 +357,14 @@ class _HomeState extends State<Home> {
       context: context,
       builder: (context) {
         return AlertDialog(
-          title: Text('Delete Task'),
-          content: Text('Are you sure you want to delete this task?'),
+          title: const Text('Delete Task'),
+          content: const Text('Are you sure you want to delete this task?'),
           actions: [
             TextButton(
               onPressed: () {
                 Navigator.of(context).pop();
               },
-              child: Text('Cancel'),
+              child: const Text('Cancel'),
             ),
             TextButton(
               onPressed: () async {
@@ -377,7 +381,7 @@ class _HomeState extends State<Home> {
                 }
                 Navigator.pop(context);
               },
-              child: Text('Delete'),
+              child: const Text('Delete'),
             ),
           ],
         );

@@ -1,4 +1,3 @@
-// ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables, use_build_context_synchronously
 
 import 'package:app/config/config.dart';
 import 'package:app/screens/home.dart';
@@ -35,7 +34,7 @@ class _AddTaskState extends State<AddTask> {
         SnackBarMsg.showSuccess(context, "Task Added Successfully !", 1);
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (context) => Home()),
+          MaterialPageRoute(builder: (context) => const Home()),
         );
       } catch (e) {
         context.loaderOverlay.hide();
@@ -70,7 +69,7 @@ class _AddTaskState extends State<AddTask> {
           borderRadius: BorderRadius.circular(10),
         ),
         enabledBorder: OutlineInputBorder(
-          borderSide: BorderSide(color: Colors.black),
+          borderSide: const BorderSide(color: Colors.black),
           borderRadius: BorderRadius.circular(10),
         ),
       ),
@@ -89,9 +88,9 @@ class _AddTaskState extends State<AddTask> {
     final double screenHeight = MediaQuery.of(context).size.height;
     return LoaderOverlay(
       child: WillPopScope(
-        onWillPop: ()async {
+        onWillPop: () async {
           Navigator.pushReplacement(
-          context, MaterialPageRoute(builder: (context) => const Home()));
+              context, MaterialPageRoute(builder: (context) => const Home()));
           return false;
         },
         child: Scaffold(
@@ -105,16 +104,17 @@ class _AddTaskState extends State<AddTask> {
                       Navigator.pushReplacement(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => Home(),
+                          builder: (context) => const Home(),
                         ),
                       );
                     },
-                    child: Icon(Icons.arrow_back_ios, color: Colors.white)),
-                Text(
+                    child:
+                        const Icon(Icons.arrow_back_ios, color: Colors.white)),
+                const Text(
                   'Add Task',
                   style: TextStyle(color: Colors.white),
                 ),
-                SizedBox()
+                const SizedBox()
               ],
             ),
             backgroundColor: Config.themeMainColor,
@@ -169,7 +169,7 @@ class _AddTaskState extends State<AddTask> {
                               borderRadius: BorderRadius.circular(10),
                             ),
                           ),
-                          child: Text('Add Task'),
+                          child: const Text('Add Task'),
                         ),
                       ),
                     ],

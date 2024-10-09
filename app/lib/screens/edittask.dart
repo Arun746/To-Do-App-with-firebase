@@ -1,4 +1,4 @@
-// ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables, use_build_context_synchronously
+
 
 import 'package:app/config/config.dart';
 import 'package:app/screens/home.dart';
@@ -54,7 +54,7 @@ class _State extends State<EditTask> {
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(
-            builder: (context) => Home(),
+            builder: (context) => const Home(),
           ),
         );
       } catch (e) {
@@ -91,7 +91,7 @@ class _State extends State<EditTask> {
           borderRadius: BorderRadius.circular(10),
         ),
         enabledBorder: OutlineInputBorder(
-          borderSide: BorderSide(color: Colors.black),
+          borderSide: const BorderSide(color: Colors.black),
           borderRadius: BorderRadius.circular(10),
         ),
       ),
@@ -126,16 +126,17 @@ class _State extends State<EditTask> {
                       Navigator.pushReplacement(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => Home(),
+                          builder: (context) => const Home(),
                         ),
                       );
                     },
-                    child: Icon(Icons.arrow_back_ios, color: Colors.white)),
-                Text(
+                    child:
+                        const Icon(Icons.arrow_back_ios, color: Colors.white)),
+                const Text(
                   'Edit Task',
                   style: TextStyle(color: Colors.white),
                 ),
-                SizedBox()
+                const SizedBox()
               ],
             ),
             backgroundColor: Config.themeMainColor,
@@ -189,7 +190,7 @@ class _State extends State<EditTask> {
                               borderRadius: BorderRadius.circular(10),
                             ),
                           ),
-                          child: Text('Save Changes'),
+                          child: const Text('Save Changes'),
                         ),
                       ),
                     ],
