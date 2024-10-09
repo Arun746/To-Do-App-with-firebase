@@ -28,7 +28,6 @@ class _AddTaskState extends State<AddTask> {
         'description': _descriptionController.text,
         'uid': widget.uid,
         'createdAt': FieldValue.serverTimestamp(),
-        // Add timestamp for task creation
       };
       try {
         await FirebaseFirestore.instance.collection('ToDo').add(taskData);
@@ -89,84 +88,92 @@ class _AddTaskState extends State<AddTask> {
     final double screenWidth = MediaQuery.of(context).size.width;
     final double screenHeight = MediaQuery.of(context).size.height;
     return LoaderOverlay(
-      child: Scaffold(
-        appBar: AppBar(
-          automaticallyImplyLeading: false,
-          title: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              InkWell(
-                  onTap: () {
-                    Navigator.pushReplacement(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => Home(),
-                      ),
-                    );
-                  },
-                  child: Icon(Icons.arrow_back_ios, color: Colors.white)),
-              Text(
-                'Add Task',
-                style: TextStyle(color: Colors.white),
-              ),
-              SizedBox()
-            ],
-          ),
-          backgroundColor: Config.themeMainColor,
-        ),
-        body: SafeArea(
-          child: SingleChildScrollView(
-            child: Padding(
-              padding: EdgeInsets.all(screenWidth * 0.04),
-              child: Form(
-                key: _formKey,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    SizedBox(
-                      height: screenHeight * 0.02,
-                    ),
-                    Text(
-                      'To create a todo task ,please add title and description about your task',
-                      style:
-                          TextStyle(fontSize: 18, color: Colors.grey.shade500),
-                      textAlign: TextAlign.center,
-                    ),
-                    SizedBox(
-                      height: screenHeight * 0.04,
-                    ),
-                    _buildTextField(
-                      labelText: 'Task Title',
-                      controller: _titleController,
-                      hintText: 'Add task title',
-                    ),
-                    SizedBox(
-                      height: screenHeight * 0.03,
-                    ),
-                    _buildTextField(
-                      labelText: 'Task Description',
-                      controller: _descriptionController,
-                      maxLines: 8,
-                      minLines: 4,
-                      hintText: 'Describe your task',
-                    ),
-                    SizedBox(
-                      height: screenHeight * 0.03,
-                    ),
-                    Center(
-                      child: ElevatedButton(
-                        onPressed: _addTask,
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Config.themeMainColor,
-                          foregroundColor: Colors.white,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10),
-                          ),
+      child: WillPopScope(
+        onWillPop: ()async {
+          Navigator.pushReplacement(
+          context, MaterialPageRoute(builder: (context) => const Home()));
+          return false;
+        },
+        child: Scaffold(
+          appBar: AppBar(
+            automaticallyImplyLeading: false,
+            title: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                InkWell(
+                    onTap: () {
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => Home(),
                         ),
-                        child: Text('Add Task'),
+                      );
+                    },
+                    child: Icon(Icons.arrow_back_ios, color: Colors.white)),
+                Text(
+                  'Add Task',
+                  style: TextStyle(color: Colors.white),
+                ),
+                SizedBox()
+              ],
+            ),
+            backgroundColor: Config.themeMainColor,
+          ),
+          body: SafeArea(
+            child: SingleChildScrollView(
+              child: Padding(
+                padding: EdgeInsets.all(screenWidth * 0.04),
+                // form
+                child: Form(
+                  key: _formKey,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      SizedBox(
+                        height: screenHeight * 0.02,
                       ),
-                    ),
-                  ],
+                      Text(
+                        'To create a todo task ,please add title and description about your task',
+                        style: TextStyle(
+                            fontSize: 18, color: Colors.grey.shade500),
+                        textAlign: TextAlign.center,
+                      ),
+                      SizedBox(
+                        height: screenHeight * 0.04,
+                      ),
+                      _buildTextField(
+                        labelText: 'Task Title',
+                        controller: _titleController,
+                        hintText: 'Add task title',
+                      ),
+                      SizedBox(
+                        height: screenHeight * 0.03,
+                      ),
+                      _buildTextField(
+                        labelText: 'Task Description',
+                        controller: _descriptionController,
+                        maxLines: 8,
+                        minLines: 4,
+                        hintText: 'Describe your task',
+                      ),
+                      SizedBox(
+                        height: screenHeight * 0.03,
+                      ),
+                      Center(
+                        child: ElevatedButton(
+                          onPressed: _addTask,
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Config.themeMainColor,
+                            foregroundColor: Colors.white,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                          ),
+                          child: Text('Add Task'),
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ),

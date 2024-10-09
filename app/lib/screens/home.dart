@@ -21,7 +21,7 @@ class _HomeState extends State<Home> {
   String? uid;
   String searchQuery = "";
   TextEditingController searchController = TextEditingController();
-
+  DateTime? lastBackPressTime;
   @override
   void initState() {
     super.initState();
@@ -52,253 +52,278 @@ class _HomeState extends State<Home> {
   Widget build(BuildContext context) {
     final double screenWidth = MediaQuery.of(context).size.width;
     final double screenHeight = MediaQuery.of(context).size.height;
-    return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Config.themeMainColor,
-        scrolledUnderElevation: 0.0,
-        title: Center(
-          child: Text(
-            'My TODOs',
-            style: TextStyle(
-              color: Colors.white,
-              fontSize: screenWidth * 0.07,
-              fontWeight: FontWeight.bold,
+    return WillPopScope(
+      onWillPop: () async {
+        DateTime now = DateTime.now();
+        if (lastBackPressTime == null ||
+            now.difference(lastBackPressTime!) > Duration(seconds: 3)) {
+          lastBackPressTime = now;
+          SnackBarMsg.showError(context, "Press again to exit", 1);
+          return Future.value(false); //
+        }
+        //exit app
+        return Future.value(true);
+      },
+      child: Scaffold(
+        //appbar
+        appBar: AppBar(
+          backgroundColor: Config.themeMainColor,
+          scrolledUnderElevation: 0.0,
+          title: Center(
+            child: Text(
+              'My TODOs',
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: screenWidth * 0.07,
+                fontWeight: FontWeight.bold,
+              ),
             ),
           ),
-        ),
-        actions: <Widget>[
-          PopupMenuButton(
-            icon: const Icon(
-              Icons.more_vert_outlined,
-              color: Colors.white,
-            ),
-            itemBuilder: (BuildContext context) {
-              return [
-                PopupMenuItem<String>(
-                  onTap: () {
-                    logoutdialog(context, screenWidth).show();
-                  },
-                  child: Row(
-                    children: [
-                      const Icon(Icons.logout),
-                      SizedBox(width: screenWidth * 0.04),
-                      const Text('Logout'),
-                    ],
-                  ),
-                ),
-              ];
-            },
-          ),
-        ],
-        automaticallyImplyLeading: false,
-        elevation: 0,
-      ),
-      body: Stack(
-        children: [
-          Padding(
-            padding: EdgeInsets.all(screenWidth * 0.04),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                //search
-                Container(
-                  decoration: BoxDecoration(
-                    color: Color.fromARGB(255, 224, 239, 240),
-                    borderRadius: BorderRadius.circular(18),
-                  ),
-                  child: TextField(
-                    controller: searchController, // Attach the controller
-                    onChanged: (value) {
-                      setState(() {
-                        searchQuery =
-                            value; // Update search query when user types
-                      });
+          //actions
+          actions: <Widget>[
+            PopupMenuButton(
+              icon: const Icon(
+                Icons.more_vert_outlined,
+                color: Colors.white,
+              ),
+              itemBuilder: (BuildContext context) {
+                return [
+                  PopupMenuItem<String>(
+                    onTap: () {
+                      logoutdialog(context, screenWidth).show();
                     },
-                    decoration: InputDecoration(
-                      border: InputBorder.none,
-                      hintText: 'Search ToDos here',
-                      hintStyle: TextStyle(
-                        color: Colors.grey,
-                      ),
-                      prefixIcon: Icon(
-                        Icons.search,
-                        color: Colors.black,
-                        size: 20,
-                      ),
-                      suffixIcon: searchQuery.isNotEmpty
-                          ? IconButton(
-                              icon: Icon(Icons.clear),
-                              onPressed: () {
-                                searchController.clear(); // Clear search input
-                                setState(() {
-                                  searchQuery = ""; // Reset search query
-                                });
-                              },
-                            )
-                          : null,
+                    child: Row(
+                      children: [
+                        const Icon(Icons.logout),
+                        SizedBox(width: screenWidth * 0.04),
+                        const Text('Logout'),
+                      ],
                     ),
                   ),
-                ), //hd
-                Padding(
-                  padding: EdgeInsets.only(
-                      top: screenHeight * 0.02, bottom: screenHeight * 0.02),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        'All TODOs',
-                        style: TextStyle(
-                            fontSize: screenWidth * 0.05,
-                            fontWeight: FontWeight.w600,
-                            color: Config.themeMainColor),
-                      ),
-                      Container(
-                        decoration: BoxDecoration(
-                          color: Color.fromARGB(255, 224, 239, 240),
-                          borderRadius: BorderRadius.circular(18),
+                ];
+              },
+            ),
+          ],
+          automaticallyImplyLeading: false,
+          elevation: 0,
+        ),
+        //body
+        body: Stack(
+          children: [
+            Padding(
+              padding: EdgeInsets.all(screenWidth * 0.04),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  //search todos with title
+                  Container(
+                    decoration: BoxDecoration(
+                      color: Color.fromARGB(255, 224, 239, 240),
+                      borderRadius: BorderRadius.circular(18),
+                    ),
+                    child: TextField(
+                      controller: searchController,
+                      onChanged: (value) {
+                        setState(() {
+                          searchQuery = value;
+                        });
+                      },
+                      decoration: InputDecoration(
+                        border: InputBorder.none,
+                        hintText: 'Search ToDos here',
+                        hintStyle: TextStyle(
+                          color: Colors.grey,
                         ),
-                        child: Padding(
-                          padding: EdgeInsets.symmetric(
-                              horizontal: screenWidth * 0.02),
-                          child: InkWell(
-                            onTap: () {
-                              Navigator.pushReplacement(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => AddTask(uid: uid),
-                                ),
-                              );
-                            },
-                            child: Row(
-                              children: [Icon(Icons.add), Text("Add New")],
-                            ),
-                          ),
+                        prefixIcon: Icon(
+                          Icons.search,
+                          color: Colors.black,
+                          size: 20,
                         ),
-                      )
-                    ],
-                  ),
-                ),
-                //tasks
-                Expanded(
-                  child: StreamBuilder(
-                    stream: FirebaseFirestore.instance
-                        .collection('ToDo')
-                        .where('uid', isEqualTo: uid)
-                        .orderBy('createdAt', descending: true)
-                        .where('title', isGreaterThanOrEqualTo: searchQuery)
-                        .where('title',
-                            isLessThanOrEqualTo: searchQuery + '\uf8ff')
-                        .snapshots(),
-                    builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
-                      if (snapshot.connectionState == ConnectionState.waiting) {
-                        return Center(child: CircularProgressIndicator());
-                      }
-                      if (snapshot.hasError) {
-                        return Center(child: Text('Error: ${snapshot.error}'));
-                      }
-                      if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
-                        return Center(
-                          child: Text(
-                            'No tasks available  !!   Please  click on add button below and add your to do tasks .',
-                            textAlign: TextAlign.center,
-                            style: TextStyle(
-                              color: Colors.grey.shade500,
-                              fontSize: screenWidth * 0.05,
-                            ),
-                          ),
-                        );
-                      }
-
-                      final tasks = snapshot.data!.docs;
-
-                      return ListView.builder(
-                        itemCount: tasks.length,
-                        itemBuilder: (context, index) {
-                          var task = tasks[index];
-                          String doccId = task.id;
-                          return Card(
-                            color: Colors.grey.shade100,
-                            shadowColor: Colors.black.withOpacity(0.9),
-                            child: ListTile(
-                              title: Text(task['title'],
-                                  style: TextStyle(
-                                      fontSize: 18,
-                                      fontWeight: FontWeight.bold)),
-                              subtitle: Text(task['description']),
-                              trailing: PopupMenuButton(
-                                shadowColor: Config.themeMainColor,
-                                color: const Color.fromARGB(255, 240, 245, 244),
-                                icon: const Icon(Icons.more_vert_outlined),
-                                itemBuilder: (BuildContext context) {
-                                  return [
-                                    PopupMenuItem<String>(
-                                      onTap: () {
-                                        Navigator.pushReplacement(
-                                          context,
-                                          MaterialPageRoute(
-                                            builder: (context) => EditTask(
-                                              doccId: doccId,
-                                              initialTitle: task['title'],
-                                              initialDescription:
-                                                  task['description'],
-                                            ),
-                                          ),
-                                        );
-                                      },
-                                      child: Row(
-                                        children: [
-                                          const Icon(
-                                            Icons.edit,
-                                            color: Colors.blueAccent,
-                                          ),
-                                          SizedBox(width: screenWidth * 0.04),
-                                          const Text(
-                                            'Edit',
-                                            style: TextStyle(
-                                              color: Colors.blueAccent,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                    PopupMenuItem<String>(
-                                      onTap: () {
-                                        delete(context, doccId);
-                                      },
-                                      child: Row(
-                                        children: [
-                                          const Icon(
-                                            Icons.delete,
-                                            color: Colors.red,
-                                          ),
-                                          SizedBox(width: screenWidth * 0.04),
-                                          const Text(
-                                            'Delete',
-                                            style: TextStyle(
-                                              color: Colors.red,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                  ];
+                        suffixIcon: searchQuery.isNotEmpty
+                            ? IconButton(
+                                icon: Icon(Icons.clear),
+                                onPressed: () {
+                                  searchController.clear();
+                                  setState(() {
+                                    searchQuery = "";
+                                  });
                                 },
+                              )
+                            : null,
+                      ),
+                    ),
+                  ),
+                  //heading with add todo
+                  Padding(
+                    padding: EdgeInsets.only(
+                        top: screenHeight * 0.02, bottom: screenHeight * 0.02),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          'All TODOs',
+                          style: TextStyle(
+                              fontSize: screenWidth * 0.05,
+                              fontWeight: FontWeight.w600,
+                              color: Config.themeMainColor),
+                        ),
+                        //addtodo
+                        Container(
+                          decoration: BoxDecoration(
+                            color: Color.fromARGB(255, 224, 239, 240),
+                            borderRadius: BorderRadius.circular(18),
+                          ),
+                          child: Padding(
+                            padding: EdgeInsets.symmetric(
+                                horizontal: screenWidth * 0.02),
+                            child: InkWell(
+                              onTap: () {
+                                Navigator.pushReplacement(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => AddTask(uid: uid),
+                                  ),
+                                );
+                              },
+                              child: Row(
+                                children: [Icon(Icons.add), Text("Add New")],
+                              ),
+                            ),
+                          ),
+                        )
+                      ],
+                    ),
+                  ),
+                  //tasks to do
+                  Expanded(
+                    child: StreamBuilder(
+                      stream: FirebaseFirestore.instance
+                          .collection('ToDo')
+                          .where('uid', isEqualTo: uid)
+                          .orderBy('createdAt', descending: true)
+                          .where('title', isGreaterThanOrEqualTo: searchQuery)
+                          .where('title',
+                              isLessThanOrEqualTo: searchQuery + '\uf8ff')
+                          .snapshots(),
+                      builder:
+                          (context, AsyncSnapshot<QuerySnapshot> snapshot) {
+                        if (snapshot.connectionState ==
+                            ConnectionState.waiting) {
+                          return Center(child: CircularProgressIndicator());
+                        }
+                        if (snapshot.hasError) {
+                          return Center(
+                              child: Text('Error: ${snapshot.error}'));
+                        }
+                        //if data is unavailable
+                        if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+                          return Center(
+                            child: Text(
+                              'No tasks available  !!   Please  click on add button below and add your to do tasks .',
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                color: Colors.grey.shade500,
+                                fontSize: screenWidth * 0.05,
                               ),
                             ),
                           );
-                        },
-                      );
-                    },
+                        }
+                        //if data is available
+                        final tasks = snapshot.data!.docs;
+
+                        return ListView.builder(
+                          itemCount: tasks.length,
+                          itemBuilder: (context, index) {
+                            var task = tasks[index];
+                            String doccId = task.id;
+                            return Card(
+                              color: Colors.grey.shade100,
+                              shadowColor: Colors.black.withOpacity(0.9),
+                              child: ListTile(
+                                title: Text(task['title'],
+                                    style: TextStyle(
+                                        fontSize: 18,
+                                        fontWeight: FontWeight.bold)),
+                                subtitle: Text(task['description']),
+                                trailing: PopupMenuButton(
+                                  shadowColor: Config.themeMainColor,
+                                  color:
+                                      const Color.fromARGB(255, 240, 245, 244),
+                                  icon: const Icon(Icons.more_vert_outlined),
+                                  itemBuilder: (BuildContext context) {
+                                    return [
+                                      //edit todo
+                                      PopupMenuItem<String>(
+                                        onTap: () {
+                                          Navigator.pushReplacement(
+                                            context,
+                                            MaterialPageRoute(
+                                              builder: (context) => EditTask(
+                                                doccId: doccId,
+                                                initialTitle: task['title'],
+                                                initialDescription:
+                                                    task['description'],
+                                              ),
+                                            ),
+                                          );
+                                        },
+                                        child: Row(
+                                          children: [
+                                            const Icon(
+                                              Icons.edit,
+                                              color: Colors.blueAccent,
+                                            ),
+                                            SizedBox(width: screenWidth * 0.04),
+                                            const Text(
+                                              'Edit',
+                                              style: TextStyle(
+                                                color: Colors.blueAccent,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                      //delete todo
+                                      PopupMenuItem<String>(
+                                        onTap: () {
+                                          delete(context, doccId);
+                                        },
+                                        child: Row(
+                                          children: [
+                                            const Icon(
+                                              Icons.delete,
+                                              color: Colors.red,
+                                            ),
+                                            SizedBox(width: screenWidth * 0.04),
+                                            const Text(
+                                              'Delete',
+                                              style: TextStyle(
+                                                color: Colors.red,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ];
+                                  },
+                                ),
+                              ),
+                            );
+                          },
+                        );
+                      },
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
 
+//logout dialog
   AwesomeDialog logoutdialog(BuildContext context, double screenWidth) {
     return AwesomeDialog(
       dialogBackgroundColor: Colors.white,
@@ -322,6 +347,7 @@ class _HomeState extends State<Home> {
     );
   }
 
+//delete method
   Future<dynamic> delete(BuildContext context, String doccId) {
     return showDialog(
       context: context,
@@ -332,13 +358,12 @@ class _HomeState extends State<Home> {
           actions: [
             TextButton(
               onPressed: () {
-                Navigator.of(context).pop(); // Close the dialog
+                Navigator.of(context).pop();
               },
               child: Text('Cancel'),
             ),
             TextButton(
               onPressed: () async {
-                Navigator.pop(context);
                 try {
                   await FirebaseFirestore.instance
                       .collection('ToDo')
@@ -350,6 +375,7 @@ class _HomeState extends State<Home> {
                 } catch (e) {
                   SnackBarMsg.showError(context, "Failed :$e", 2);
                 }
+                Navigator.pop(context);
               },
               child: Text('Delete'),
             ),

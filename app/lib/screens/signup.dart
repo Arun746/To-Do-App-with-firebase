@@ -62,181 +62,191 @@ class _SignUpState extends State<SignUp> {
     final double screenWidth = MediaQuery.of(context).size.width;
     final double screenHeight = MediaQuery.of(context).size.height;
     return LoaderOverlay(
-      child: Scaffold(
-        backgroundColor: Colors.white,
-        body: SafeArea(
-          child: SingleChildScrollView(
-            child: Column(
-              children: [
-                SizedBox(
-                  height: screenHeight * 0.1,
-                ),
-                //signup txt
-                Padding(
-                  padding: EdgeInsets.only(top: 0.01 * screenHeight),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text(
-                        'Sign ',
-                        style: TextStyle(
-                          fontSize: 25 * (screenWidth / 360),
-                          fontWeight: FontWeight.w500,
-                          color: Colors.green,
-                        ),
-                      ),
-                      Text(
-                        'Up',
-                        style: TextStyle(
-                          fontSize: 25 * (screenWidth / 360),
-                          fontWeight: FontWeight.w500,
-                          color: Config.themeMainColor,
-                        ),
-                      ),
-                    ],
+      child: WillPopScope(
+        onWillPop: () async {
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (context) => const LoginScreen()),
+          );
+          return false;
+        },
+        child: Scaffold(
+          backgroundColor: Colors.white,
+          body: SafeArea(
+            child: SingleChildScrollView(
+              child: Column(
+                children: [
+                  SizedBox(
+                    height: screenHeight * 0.1,
                   ),
-                ),
-                Padding(
-                  padding: EdgeInsets.symmetric(
-                    horizontal: 0.08 * screenWidth,
-                    vertical: 0.008 * screenHeight,
-                  ),
-                  child: Text(
-                    'Create An Account And Enjoy Our Services',
-                    style: TextStyle(
-                      fontSize: 16 * (screenWidth / 360),
-                      color: Colors.grey.shade700,
-                    ),
-                    textAlign: TextAlign.center,
-                  ),
-                ),
-                //form
-                Padding(
-                  padding: EdgeInsets.symmetric(
-                      horizontal: 0.1 * screenWidth,
-                      vertical: 0.01 * screenHeight),
-                  child: Form(
-                    key: _formKey,
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
+                  //signup txt
+                  Padding(
+                    padding: EdgeInsets.only(top: 0.01 * screenHeight),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        TextFormField(
-                          controller: emailController,
-                          decoration: _inputDecoration(
-                            'Email',
-                            const Icon(Icons.mail),
+                        Text(
+                          'Sign ',
+                          style: TextStyle(
+                            fontSize: 25 * (screenWidth / 360),
+                            fontWeight: FontWeight.w500,
+                            color: Colors.green,
                           ),
-                          validator: (value) {
-                            if (value == null || value.isEmpty) {
-                              return 'Please enter your email';
-                            }
-
-                            return null;
-                          },
                         ),
-                        SizedBox(height: 0.02 * screenHeight),
-                        TextFormField(
-                          controller: passwordController,
-                          decoration: _inputDecoration(
-                            'Password',
-                            const Icon(Icons.password),
-                          ),
-                          validator: (value) {
-                            if (value == null || value.isEmpty) {
-                              return 'Please enter your password';
-                            }
-                            return null;
-                          },
-                          obscureText: true,
-                        ),
-                        SizedBox(height: 0.02 * screenHeight),
-                        TextFormField(
-                          controller: confirmpasswordController,
-                          decoration: _inputDecoration(
-                            'Confirm Password',
-                            const Icon(Icons.password),
-                          ),
-                          validator: (value) {
-                            if (value == null || value.isEmpty) {
-                              return 'Please confirm your password';
-                            } else if (value != passwordController.text) {
-                              return 'Passwords do not match';
-                            }
-                            return null;
-                          },
-                          obscureText: true,
-                        ),
-                        //signuo
-                        Center(
-                          child: Padding(
-                            padding: EdgeInsets.only(top: 0.05 * screenHeight),
-                            child: SizedBox(
-                              width: screenWidth * 0.5,
-                              child: ElevatedButton(
-                                onPressed: () async {
-                                  if (_formKey.currentState!.validate()) {
-                                    signup();
-                                  }
-                                },
-                                style: ElevatedButton.styleFrom(
-                                  backgroundColor: Config.themeMainColor,
-                                  shadowColor: Colors.transparent,
-                                ),
-                                child: Text(
-                                  'Sign Up',
-                                  style: TextStyle(color: Colors.white),
-                                ),
-                              ),
-                            ),
+                        Text(
+                          'Up',
+                          style: TextStyle(
+                            fontSize: 25 * (screenWidth / 360),
+                            fontWeight: FontWeight.w500,
+                            color: Config.themeMainColor,
                           ),
                         ),
                       ],
                     ),
                   ),
-                ),
-                //elselogin
-                Text(
-                  'Or',
-                  style: TextStyle(
-                    fontSize: 14 * (screenWidth / 360),
-                  ),
-                ),
-                Padding(
-                  padding: EdgeInsets.only(
-                    bottom: 0.03 * screenHeight,
-                    top: screenHeight * 0.01,
-                  ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text(
-                        'Already have an account?',
-                        style: TextStyle(
-                          fontSize: 14 * (screenWidth / 360),
-                        ),
+                  Padding(
+                    padding: EdgeInsets.symmetric(
+                      horizontal: 0.08 * screenWidth,
+                      vertical: 0.008 * screenHeight,
+                    ),
+                    child: Text(
+                      'Create An Account And Enjoy Our Services',
+                      style: TextStyle(
+                        fontSize: 16 * (screenWidth / 360),
+                        color: Colors.grey.shade700,
                       ),
-                      InkWell(
-                        onTap: () {
-                          Navigator.pushReplacement(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => LoginScreen(),
+                      textAlign: TextAlign.center,
+                    ),
+                  ),
+                  //form
+                  Padding(
+                    padding: EdgeInsets.symmetric(
+                        horizontal: 0.1 * screenWidth,
+                        vertical: 0.01 * screenHeight),
+                    child: Form(
+                      key: _formKey,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          TextFormField(
+                            controller: emailController,
+                            decoration: _inputDecoration(
+                              'Email',
+                              const Icon(Icons.mail),
                             ),
-                          );
-                        },
-                        child: Text(
-                          ' Login',
+                            validator: (value) {
+                              if (value == null || value.isEmpty) {
+                                return 'Please enter your email';
+                              }
+
+                              return null;
+                            },
+                          ),
+                          SizedBox(height: 0.02 * screenHeight),
+                          TextFormField(
+                            controller: passwordController,
+                            decoration: _inputDecoration(
+                              'Password',
+                              const Icon(Icons.password),
+                            ),
+                            validator: (value) {
+                              if (value == null || value.isEmpty) {
+                                return 'Please enter your password';
+                              }
+                              return null;
+                            },
+                            obscureText: true,
+                          ),
+                          SizedBox(height: 0.02 * screenHeight),
+                          TextFormField(
+                            controller: confirmpasswordController,
+                            decoration: _inputDecoration(
+                              'Confirm Password',
+                              const Icon(Icons.password),
+                            ),
+                            validator: (value) {
+                              if (value == null || value.isEmpty) {
+                                return 'Please confirm your password';
+                              } else if (value != passwordController.text) {
+                                return 'Passwords do not match';
+                              }
+                              return null;
+                            },
+                            obscureText: true,
+                          ),
+                          //signuo
+                          Center(
+                            child: Padding(
+                              padding:
+                                  EdgeInsets.only(top: 0.05 * screenHeight),
+                              child: SizedBox(
+                                width: screenWidth * 0.5,
+                                child: ElevatedButton(
+                                  onPressed: () async {
+                                    if (_formKey.currentState!.validate()) {
+                                      signup();
+                                    }
+                                  },
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: Config.themeMainColor,
+                                    shadowColor: Colors.transparent,
+                                  ),
+                                  child: Text(
+                                    'Sign Up',
+                                    style: TextStyle(color: Colors.white),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                  //elselogin
+                  Text(
+                    'Or',
+                    style: TextStyle(
+                      fontSize: 14 * (screenWidth / 360),
+                    ),
+                  ),
+                  Padding(
+                    padding: EdgeInsets.only(
+                      bottom: 0.03 * screenHeight,
+                      top: screenHeight * 0.01,
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(
+                          'Already have an account?',
                           style: TextStyle(
-                            color: Config.themeMainColor,
-                            fontWeight: FontWeight.bold,
-                            fontSize: 15 * (screenWidth / 360),
+                            fontSize: 14 * (screenWidth / 360),
                           ),
                         ),
-                      )
-                    ],
+                        InkWell(
+                          onTap: () {
+                            Navigator.pushReplacement(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => LoginScreen(),
+                              ),
+                            );
+                          },
+                          child: Text(
+                            ' Login',
+                            style: TextStyle(
+                              color: Config.themeMainColor,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 15 * (screenWidth / 360),
+                            ),
+                          ),
+                        )
+                      ],
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
         ),

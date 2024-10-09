@@ -9,6 +9,7 @@ import 'package:flutter/material.dart';
 import 'package:loader_overlay/loader_overlay.dart';
 
 class EditTask extends StatefulWidget {
+  // to details to change
   final String doccId;
   final String initialTitle;
   final String initialDescription;
@@ -36,6 +37,7 @@ class _State extends State<EditTask> {
     _descriptionController.text = widget.initialDescription;
   }
 
+//update
   Future<void> _updateTask() async {
     if (_formKey.currentState!.validate()) {
       context.loaderOverlay.show();
@@ -107,84 +109,91 @@ class _State extends State<EditTask> {
     final double screenWidth = MediaQuery.of(context).size.width;
     final double screenHeight = MediaQuery.of(context).size.height;
     return LoaderOverlay(
-      child: Scaffold(
-        appBar: AppBar(
-          automaticallyImplyLeading: false,
-          title: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              InkWell(
-                  onTap: () {
-                    Navigator.pushReplacement(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => Home(),
-                      ),
-                    );
-                  },
-                  child: Icon(Icons.arrow_back_ios, color: Colors.white)),
-              Text(
-                'Edit Task',
-                style: TextStyle(color: Colors.white),
-              ),
-              SizedBox()
-            ],
-          ),
-          backgroundColor: Config.themeMainColor,
-        ),
-        body: SafeArea(
-          child: SingleChildScrollView(
-            child: Padding(
-              padding: EdgeInsets.all(screenWidth * 0.04),
-              child: Form(
-                key: _formKey,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    SizedBox(
-                      height: screenHeight * 0.02,
-                    ),
-                    Text(
-                      'To edit a todo task ,please edit the  title and description about your task',
-                      style:
-                          TextStyle(fontSize: 18, color: Colors.grey.shade500),
-                      textAlign: TextAlign.center,
-                    ),
-                    SizedBox(
-                      height: screenHeight * 0.04,
-                    ),
-                    _buildTextField(
-                      labelText: 'Task Title',
-                      controller: _titleController,
-                      hintText: 'Add task title',
-                    ),
-                    SizedBox(
-                      height: screenHeight * 0.03,
-                    ),
-                    _buildTextField(
-                      labelText: 'Task Description',
-                      controller: _descriptionController,
-                      maxLines: 8,
-                      minLines: 4,
-                      hintText: 'Describe your task',
-                    ),
-                    SizedBox(
-                      height: screenHeight * 0.03,
-                    ),
-                    Center(
-                      child: ElevatedButton(
-                        onPressed: _updateTask,
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Config.themeMainColor,
-                          foregroundColor: Colors.white,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10),
-                          ),
+      child: WillPopScope(
+        onWillPop: () async {
+          Navigator.pushReplacement(
+              context, MaterialPageRoute(builder: (context) => const Home()));
+          return false;
+        },
+        child: Scaffold(
+          appBar: AppBar(
+            automaticallyImplyLeading: false,
+            title: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                InkWell(
+                    onTap: () {
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => Home(),
                         ),
-                        child: Text('Save Changes'),
+                      );
+                    },
+                    child: Icon(Icons.arrow_back_ios, color: Colors.white)),
+                Text(
+                  'Edit Task',
+                  style: TextStyle(color: Colors.white),
+                ),
+                SizedBox()
+              ],
+            ),
+            backgroundColor: Config.themeMainColor,
+          ),
+          body: SafeArea(
+            child: SingleChildScrollView(
+              child: Padding(
+                padding: EdgeInsets.all(screenWidth * 0.04),
+                child: Form(
+                  key: _formKey,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      SizedBox(
+                        height: screenHeight * 0.02,
                       ),
-                    ),
-                  ],
+                      Text(
+                        'To edit a todo task ,please edit the  title and description about your task',
+                        style: TextStyle(
+                            fontSize: 18, color: Colors.grey.shade500),
+                        textAlign: TextAlign.center,
+                      ),
+                      SizedBox(
+                        height: screenHeight * 0.04,
+                      ),
+                      _buildTextField(
+                        labelText: 'Task Title',
+                        controller: _titleController,
+                        hintText: 'Add task title',
+                      ),
+                      SizedBox(
+                        height: screenHeight * 0.03,
+                      ),
+                      _buildTextField(
+                        labelText: 'Task Description',
+                        controller: _descriptionController,
+                        maxLines: 8,
+                        minLines: 4,
+                        hintText: 'Describe your task',
+                      ),
+                      SizedBox(
+                        height: screenHeight * 0.03,
+                      ),
+                      Center(
+                        child: ElevatedButton(
+                          onPressed: _updateTask,
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Config.themeMainColor,
+                            foregroundColor: Colors.white,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                          ),
+                          child: Text('Save Changes'),
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ),

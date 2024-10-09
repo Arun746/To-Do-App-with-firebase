@@ -37,8 +37,7 @@ class LoginNotifier extends StateNotifier<LoginState> {
 
   Future<void> login(WidgetRef ref, BuildContext context) async {
     if (state.username.isEmpty || state.password.isEmpty) {
-      // Handle validation error
-      SnackBarMsg.showSuccess(context, "Email and Password are required", 2);
+      SnackBarMsg.showError(context, "Email and Password are required", 2);
       return;
     }
 
@@ -52,11 +51,11 @@ class LoginNotifier extends StateNotifier<LoginState> {
           context, MaterialPageRoute(builder: (context) => const Home()));
     } on FirebaseAuthException catch (e) {
       if (e.code == 'user-not-found') {
-        SnackBarMsg.showSuccess(context, "User not valid", 2);
+        SnackBarMsg.showError(context, "User not valid", 2);
       } else if (e.code == 'wrong-password') {
-        SnackBarMsg.showSuccess(context, "Invalid Password", 2);
+        SnackBarMsg.showError(context, "Invalid Password", 2);
       } else {
-        SnackBarMsg.showSuccess(context, "${e.message}", 2);
+        SnackBarMsg.showError(context, "${e.message}", 2);
       }
     }
   }
